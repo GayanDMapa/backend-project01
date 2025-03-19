@@ -13,6 +13,7 @@ import express from "express";
     console.log(`Server is running on port ${PORT}`);
   });
   
+  //postgresql databse connection
   import pg from "pg";
 import dotenv from "dotenv";
 
