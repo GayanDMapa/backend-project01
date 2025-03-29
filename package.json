@@ -1,16 +1,35 @@
-{
+{ 
   "name": "backend",
   "version": "1.0.0",
-  "description": "",
+  "description": "Build a simple Task Manager web application with a Node.js/Express backend, and a PostgreSQL database.",
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "node index.js"
+    "start": "node src/index.js"
   },
+  
   "dependencies": {
-    "express": "^4.18.2",
-    "dotenv": "^16.0.3",
-    "pg": "^8.10.0",
-    "cors": "^2.8.5"
-  } 
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "pg": "^8.14.1"
+  },
+  "devDependencies": {
+    "eslint": "^9.23.0",
+    "eslint-config-prettier": "^10.1.1",
+    "eslint-plugin-prettier": "^5.2.5",
+    "nodemon": "^3.1.9",
+    "prettier": "^3.5.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GayanDMapa/backend-project01.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/GayanDMapa/backend-project01/issues"
+  },
+  "homepage": "https://github.com/GayanDMapa/backend-project01#readme"
 }
