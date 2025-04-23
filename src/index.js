@@ -4,14 +4,10 @@ import dotenv from 'dotenv';
 import pool from "./config/db.js";
 import tasksRoutes from "./routes/tasksRoutes.js";
 import errorHandling from "./middlewares/errorHandler.js";
+import healthRoutes from "./routes/health.js";
 
-dotenv.config();
+  dotenv.config();
   const app = express();
-
-//   // Health-check route (just checking if our helper is awake)
-//   app.get("/api/health", (req, res) => {
-//     res.send("OK");
-//   });
 
   // Start the server
   const PORT = 5000;
@@ -25,17 +21,11 @@ dotenv.config();
 
   //router part
   app.use("/api", tasksRoutes);
+  app.use("/api", healthRoutes);  //health check router
 
   //error handling meddleware
   app.use(errorHandling);
 
-  //simple testing postgresql
-  app.get("/",async (req, res) => {
-    try {
-    const result = await pool.query("SELECT current_database()");
-    res.send(`The database name is: ${result.rows[0].current_database}`);
-    } catch (err) {
-  console.error(err);
-  res.status(500).send("Database query failed");
-}
-  });
+  
+   
+ 

@@ -32,13 +32,6 @@ export const updateTaskService = async (id, title, description, is_completed) =>
     return result.rows[0]; // Return the updated task
 };
 
-// 🔹 Delete a Task
-// export const deleteTaskService = async (id) => {
-//     const result = await pool.query(`DELETE FROM tasks WHERE id = $1 RETURNING *`,
-//         [id]);
-//     return result.rows[0];  
-// };
-
 export const deleteTaskService = async (id) => {
     const result = await pool.query(`DELETE FROM tasks WHERE id = $1 RETURNING *`, [id]);
     return result.rows[0];  
