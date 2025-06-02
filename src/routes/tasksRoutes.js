@@ -1,13 +1,20 @@
-import express from "express";
-import { createUser, deleteTask, getAllTasks, getTaskById, updateTask } from "../controllers/taskController.js";
+import express from 'express';
+import {
+  createUser,
+  getAllTasks,
+  getTaskById,
+  updateTask,
+  deleteTask,
+} from '../controllers/taskController.js';
+import { authenticateToken } from '../middlewares/authMiddleware.js';
 
 const router = express.Router();
 
-router.post("/task",createUser);
-router.get("/task",getAllTasks);
-router.get("/task/:id", getTaskById);
-router.put("/task/:id", updateTask);
-router.delete("/task/:id", deleteTask);
-
+// Task routes (all protected by authentication middleware)
+router.post('/tasks', authenticateToken, createUser);
+router.get('/tasks', authenticateToken, getAllTasks);
+router.get('/tasks/:id', authenticateToken, getTaskById);
+router.put('/tasks/:id', authenticateToken, updateTask);
+router.delete('/tasks/:id', authenticateToken, deleteTask);
 
 export default router;

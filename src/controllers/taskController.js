@@ -1,67 +1,75 @@
-//Standardized response funtion
+// src/controllers/taskController.js
 
-import { createTaskService, deleteTaskService, getAllTasksService, getTaskByIdService, updateTaskService } from "../model/tasksModel.js";
+import {
+  createTaskLogic,
+  deleteTaskLogic,
+  getAllTasksLogic,
+  getTaskByIdLogic,
+  updateTaskLogic,
+} from '../services/taskService.js';
 
+// Response helper
 const handleResponse = (res, status, message, data = null) => {
-    res.status(status).json({
-        status,
-        message,
-        data,
-    });
+  res.status(status).json({
+    status,
+    message,
+    data,
+  });
 };
 
-export const createUser = async(req, res, next) => {
-    const {user_id, title, description} = req.body;
-    try{
-        const newTask = await createTaskService(user_id,title, description);
-        handleResponse(res, 201, "Task created successfully",newTask)
-    }catch(err){
-        next(err);
-    }
+// CREATE
+export const createUser = async (req, res, next) => {
+  const { title, description } = req.body;
+  const user_id = req.user.user_id; // Get it from the decoded token
+  try {
+    const newTask = await createTaskLogic(user_id, title, description);
+    handleResponse(res, 201, 'Task created successfully', newTask);
+  } catch (err) {
+    next(err);
+  }
 };
 
-export const getAllTasks = async(req, res, next) => {
-    try{
-        const tasks = await getAllTasksService();
-        handleResponse(res, 200, "Task fetched successfully",tasks)
-    }catch(err){
-        next(err);
-    }
+// READ ALL
+export const getAllTasks = async (req, res, next) => {
+  try {
+    const tasks = await getAllTasksLogic();
+    handleResponse(res, 200, 'Tasks fetched successfully', tasks);
+  } catch (err) {
+    next(err);
+  }
 };
 
-export const getTaskById = async(req, res, next) => {
-    try{
-        const task = await getTaskByIdService(req.params.id);
-        if(!task) return handleResponse(res, 404, "Task not found")
-        handleResponse(res, 201, "Task fetched successfully",task)
-    }catch(err){
-        next(err);
-    }
+// READ ONE
+export const getTaskById = async (req, res, next) => {
+  try {
+    const task = await getTaskByIdLogic(req.params.id);
+    if (!task) return handleResponse(res, 404, 'Task not found');
+    handleResponse(res, 200, 'Task fetched successfully', task);
+  } catch (err) {
+    next(err);
+  }
 };
 
+// UPDATE
 export const updateTask = async (req, res, next) => {
-    const { title, description, is_completed } = req.body; // Extract the task details from the body
-    const taskId = req.params.id; // Extract task id from route params
-
-    try {
-        const updatedTask = await updateTaskService(taskId, title, description, is_completed); // Pass the data to the service
-        if (!updatedTask) {return handleResponse(res, 404, "Task not found");}
-        handleResponse(res, 200, "Task updated successfully", updatedTask); // Send the updated task back
-    } catch (err) {
-        next(err); // Pass error to next middleware
-    }
+  const { title, description, is_completed } = req.body;
+  const taskId = req.params.id;
+  try {
+    const updatedTask = await updateTaskLogic(taskId, title, description, is_completed);
+    if (!updatedTask) return handleResponse(res, 404, 'Task not found');
+    handleResponse(res, 200, 'Task updated successfully', updatedTask);
+  } catch (err) {
+    next(err);
+  }
 };
 
-
-export const deleteTask = async(req, res, next) => {
-    try{
-        const deletedTask = await deleteTaskService(req.params.id);
-        if(!deletedTask) return handleResponse(res, 404, "Task not found")
-        handleResponse(res, 201, "Task deleted successfully",deletedTask)
-    }catch(err){
-        next(err);
-    }
+// DELETE
+export const deleteTask = async (req, res, next) => {
+  try {
+    const deletedTask = await deleteTaskLogic(req.params.id);
+    if (!deletedTask) return handleResponse(res, 404, 'Task not found');
+    handleResponse(res, 200, 'Task deleted successfully', deletedTask);
+  } catch (err) {
+    next(err);
+  }
 };
-
-
-
