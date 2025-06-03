@@ -6,6 +6,8 @@ import tasksRoutes from "./routes/tasksRoutes.js";
 import healthRoutes from "./routes/health.js";
 import authRoutes from "./routes/authRoutes.js";  // Import auth routes
 import errorHandling from "./middlewares/errorHandler.js";
+import myTaskRoutes from './routes/myTaskRoutes.js';
+
 
 dotenv.config();
 
@@ -23,6 +25,7 @@ app.use(cors());
 app.use("/api", tasksRoutes);
 app.use("/api", healthRoutes);
 app.use("/api", authRoutes);  // Auth routes (like /api/login)
+app.use('/api', myTaskRoutes);
 
 // Error handling middleware
 app.use(errorHandling);
