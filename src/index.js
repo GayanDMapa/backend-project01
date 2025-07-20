@@ -1,33 +1,42 @@
+// src/index.js
+
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import pool from "./config/db.js"; // Your DB config, keep if needed
-import tasksRoutes from "./routes/tasksRoutes.js";
-import healthRoutes from "./routes/health.js";
-import authRoutes from "./routes/authRoutes.js";  // Import auth routes
-import errorHandling from "./middlewares/errorHandler.js";
-import myTaskRoutes from './routes/myTaskRoutes.js';
 
-
+// Load environment variables from .env
 dotenv.config();
 
-console.log("JWT_SECRET:", process.env.JWT_SECRET); // ✅ Should print the secret
+// Import DB connection (optional but good to verify)
+import pool from "./config/db.js";
 
+// Import route files
+import tasksRoutes from "./routes/tasksRoutes.js";
+import healthRoutes from "./routes/health.js";
+import authRoutes from "./routes/authRoutes.js";        // Signup/Login routes
+import myTaskRoutes from "./routes/myTaskRoutes.js";    // Authenticated user task routes
 
+// Import error handler middleware
+import errorHandling from "./middlewares/errorHandler.js";
+
+// Create Express app
 const app = express();
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 
-// Middlewares
-app.use(express.json());
-app.use(cors());
+// Log secret for debugging (you can remove later)
+console.log("JWT_SECRET:", process.env.JWT_SECRET);
 
-// Routers: all under "/api"
+// Middleware setup
+app.use(cors());           // Allow cross-origin requests
+app.use(express.json());   // Parse JSON request bodies
+
+// API Routes (prefix all with /api)
 app.use("/api", tasksRoutes);
 app.use("/api", healthRoutes);
-app.use("/api", authRoutes);  // Auth routes (like /api/login)
-app.use('/api', myTaskRoutes);
+app.use("/api", authRoutes);
+app.use("/api", myTaskRoutes);  // CRUD with JWT
 
-// Error handling middleware
+// Error handler middleware (should be last)
 app.use(errorHandling);
 
 // Start the server

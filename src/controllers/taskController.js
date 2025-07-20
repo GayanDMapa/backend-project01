@@ -18,9 +18,21 @@ const handleResponse = (res, status, message, data = null) => {
 };
 
 // CREATE
+// export const createUser = async (req, res, next) => {
+//   const { title, description } = req.body;
+//   const user_id = req.user.user_id; // Get it from the decoded token
+//   try {
+//     const newTask = await createTaskLogic(user_id, title, description);
+//     handleResponse(res, 201, 'Task created successfully', newTask);
+//   } catch (err) {
+//     next(err);
+//   }
+// };
+
 export const createUser = async (req, res, next) => {
   const { title, description } = req.body;
-  const user_id = req.user.user_id; // Get it from the decoded token
+  const user_id = req.user.id; // ✅ FIXED here
+
   try {
     const newTask = await createTaskLogic(user_id, title, description);
     handleResponse(res, 201, 'Task created successfully', newTask);

@@ -6,17 +6,19 @@ import {
   updateMyTask,
   deleteMyTask,
 } from '../controllers/myTaskController.js';
-import { authenticateToken } from '../middlewares/authMiddleware.js';
+
+import authenticateToken from '../middlewares/authMiddleware.js';
 
 const router = express.Router();
 
-// All these routes are protected by JWT
+// All routes here require authentication
 router.use(authenticateToken);
 
-router.get('/mytasks', getMyTasks);
-router.get('/mytasks/:id', getMyTaskById);
-router.post('/mytasks', createMyTask);
-router.put('/mytasks/:id', updateMyTask);
-router.delete('/mytasks/:id', deleteMyTask);
+// MyTasks routes
+router.get('/mytasks', authenticateToken, getMyTasks);
+router.get('/mytasks/:id', authenticateToken, getMyTaskById);
+router.post('/mytasks', authenticateToken, createMyTask);
+router.put('/mytasks/:id', authenticateToken, updateMyTask);
+router.delete('/mytasks/:id', authenticateToken, deleteMyTask);
 
 export default router;

@@ -6,7 +6,7 @@ import {
   updateTask,
   deleteTask,
 } from '../controllers/taskController.js';
-import { authenticateToken } from '../middlewares/authMiddleware.js';
+import  authenticateToken from '../middlewares/authMiddleware.js';
 
 const router = express.Router();
 

@@ -1,64 +1,73 @@
-// controllers/authController.js
-import { createUser, getUserByEmail, comparePasswords } from "../services/authService.js";
 import jwt from "jsonwebtoken";
+import { verifyUser } from '../model/authModel.js';
+
+import dotenv from "dotenv";
+import {
+  registerUser,
+  loginUser,
+  confirmEmail
+} from "../services/authService.js";
+
+
+dotenv.config();
 
 // Signup user controller
-export const signupUser = async (req, res) => {
+export const signup = async (req, res) => {
   const { name, email, password } = req.body;
 
-  // Validate input
   if (!name || !email || !password) {
     return res.status(400).json({ message: "Name, email, and password are required" });
   }
 
   try {
-    // Check if user already exists
-    const existingUser = await getUserByEmail(email);
-    if (existingUser) {
-      return res.status(409).json({ message: "User already exists" });
-    }
-
-    // Create new user
-    const newUser = await createUser(name, email, password);
-
-    // Generate token
-    const token = jwt.sign({ id: newUser.id }, process.env.JWT_SECRET, { expiresIn: "1h" });
+    // Register user (registerUser handles hashing, saving, and sending email)
+    await registerUser(name, email, password);
 
     res.status(201).json({
-      message: "User registered successfully",
-      token,
-      user: newUser,
+      message: "Signup successful. Please check your email to verify your account.",
     });
   } catch (err) {
     console.error("Signup error:", err);
-    res.status(500).json({ message: "Something went wrong", error: err.message });
+    res.status(400).json({ message: err.message });
   }
 };
 
+
+export const verifyEmail = async (req, res) => {
+  const { token } = req.params;
+  console.log("📦 Received token:", token); // <== add this
+
+  if (!token) {
+    return res.status(401).json({ message: 'No token provided. Unauthorized.' });
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    
+    console.log("✅ Decoded token:", decoded); // <== add this
+    await verifyUser(decoded.id);
+
+    return res.json({ success: true, message: 'Email verified!' });
+  } catch (err) {
+    console.error("❌ Token verification error:", err.message); // <== this helps
+    return res.status(400).json({ message: 'Invalid or expired token.' });
+  }
+};
+
+
+
+
 // Login user controller
-export const loginUser = async (req, res) => {
+export const login = async (req, res) => {
   const { email, password } = req.body;
 
-  // Validate input
   if (!email || !password) {
     return res.status(400).json({ message: "Email and password are required" });
   }
 
   try {
-    // Find user
-    const user = await getUserByEmail(email);
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    // Compare password
-    const isMatch = await comparePasswords(password, user.password_hash);
-    if (!isMatch) {
-      return res.status(401).json({ message: "Invalid password" });
-    }
-
-    // Generate token
-    const token = jwt.sign({ user_id: user.id }, process.env.JWT_SECRET, { expiresIn: "1h" });
+    // loginUser checks user, password, and verified status, then returns token and user
+    const { user, token } = await loginUser(email, password);
 
     res.status(200).json({
       message: "Login successful",
@@ -67,11 +76,11 @@ export const loginUser = async (req, res) => {
         id: user.id,
         name: user.name,
         email: user.email,
-        role: user.role || null,
+        is_verified: user.is_verified,
       },
     });
   } catch (err) {
     console.error("Login error:", err);
-    res.status(500).json({ message: "Something went wrong", error: err.message });
+    res.status(401).json({ message: err.message });
   }
 };
